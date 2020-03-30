@@ -1,0 +1,152 @@
+<div class="fluid" rtl>
+    
+    <button #toClick [hidden]="true" type="button" (click)="sample()"></button>
+    <div class="row">
+        <!-- <div class="col-md-9" *ngIf="init==1">
+            <mat-spinner></mat-spinner>
+        </div> -->
+        <div class="col-md-8">
+            <agm-map
+            [latitude]="latitude"
+            [longitude]="longitude"
+            [zoom]="8"
+            [mapTypeId]="mapType"
+            (mapReady)="onMapReady()"
+            >
+            
+            <!-- (mapClick)="addMarker($event.coords.lat, $event.coords.lng)" -->
+            <div >
+                <agm-marker
+                *ngFor="let marker of markers; let i = index "
+                [latitude]="marker.lat"
+                [longitude]="marker.lng"
+                [opacity]="marker.alpha"
+                [markerDraggable]="false"
+                [visible]="visible(marker,i)"
+                [agmFitBounds]="true"
+                [iconUrl]="{
+                    url: icons[marker.ctgry_id].icon,
+                    scaledSize: marker.isClicked ? {width: 40,height: 40} : {width: 25,height: 25}
+                }"
+                (markerClick)="openDialog(marker)"
+                >
+                
+                <!-- [iconUrl]="icons.parking.icon"
+                (markerClick)="selectMarker($event)" -->
+
+                <!-- <agm-info-window>
+                    <h2>{{marker.prjct_id}}</h2>
+                    <h2>{{marker.prjct_title}}</h2>
+                    <h2>{{marker.year_fndd}}</h2>
+                    <h2>{{marker.str}}</h2>
+                    <a routerLink="{{ marker.url }}">Details</a>
+                </agm-info-window> -->
+                </agm-marker>
+            </div>
+            <!-- <agm-rectangle
+            [north]="max('lat')"
+            [east]="max('lng')"
+            [south]="min('lat')"
+            [west]="min('lng')"
+            >
+            </agm-rectangle> -->
+            </agm-map>
+        </div>
+        <div class="col-md-4" [ngClass]="routeAnimationsElements">
+            <div [formGroup]="myGroup">
+                <h2>Filter Options <button type="button" mat-fab color="primary" class="add"><fa-icon icon="filter"></fa-icon></button></h2>
+                <!-- <div class="row">
+                    <mat-form-field class="col">
+                        <input matInput placeholder="{{ 'anms.examples.crud.placeholder1' | translate }}"
+                        formControlName="title" required autofocus>
+                    </mat-form-field>
+                </div> -->
+                <div class="row">
+                    <mat-form-field class="col">
+                        <mat-label>Year Funded</mat-label>
+                        <mat-select [(value)]="year_fndd" formControlName="year_fndd">
+                            <mat-option value="all" selected>All</mat-option> 
+                            <span *ngFor="let item of year">
+                                <mat-option value="{{item.year_fndd}}" selected>{{item.year_fndd}}</mat-option> 
+                            </span>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row">
+                    <mat-form-field class="col">
+                        <mat-label>Project Category</mat-label>
+                        <mat-select [(value)]="ctgry_id" formControlName="ctgry_id">
+                            <mat-option value="all" selected>All</mat-option> 
+                            <span *ngFor="let item of category">
+                                <mat-option value="{{item.ctgry_id}}" selected>{{item.ctgry_desc | uppercase}}</mat-option> 
+                            </span>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row" *ngIf="ctgry_id==3">
+                    <mat-form-field class="col">
+                        <mat-label>Sub Category</mat-label>
+                        <mat-select [(value)]="ctgry_id" formControlName="ctgry_id" required>
+                            <mat-option value="all">All</mat-option> 
+                            <span *ngFor="let item of category">
+                                <mat-option value="{{item.ctgry_id}}" selected>{{item.ctgry_desc | uppercase}}</mat-option> 
+                            </span>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row" *ngIf="locs!=undefined">
+                    <mat-form-field class="col">
+                        <mat-label>Region</mat-label>
+                        <mat-select [(value)]="region" formControlName="region">
+                          <mat-option *ngFor="let item of locs[0]" value="{{item.code}}" selected>{{item.name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row" *ngIf="region!=undefined">
+                    <mat-form-field class="col">
+                        <mat-label>Province</mat-label>
+                        <mat-select [(value)]="province" formControlName="province">
+                            <mat-option value="all" selected>All</mat-option> 
+                            <span *ngFor="let item of locs[1]">
+                              <mat-option *ngIf="find_prov(item,region)" value="{{item.code}}" selected>{{item.name | titlecase}}</mat-option> 
+                            </span>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="row" *ngIf="province!=undefined && province!='all'">
+                    <mat-form-field class="col">
+                        <mat-label>Municipality/City</mat-label>
+                        <mat-select [(value)]="mun_city" formControlName="mun_city"> 
+                            <mat-option value="all" selected>All</mat-option> 
+                            <span *ngFor="let item of locs[2]">
+                            <mat-option *ngIf="find_mun_city(item,province)" value="{{item.code}}" selected>{{item.name | titlecase}}</mat-option> 
+                            </span>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <!-- <div class="row">
+                    <div class="col-12 d-flex justify-content-between">
+                        <button [disabled]="!myGroup.valid" (click)="save()" mat-raised-button color="primary">
+                        {{'anms.examples.crud.save' | translate }}
+                        </button>
+                        <button (click)="cancel()" mat-raised-button>
+                            {{'anms.examples.crud.cancel' | translate }}
+                        </button>
+                        <button type="button" mat-fab color="primary" class="add" [ngClass]="routeAnimationsElements" (click)="setvisible()">
+                            <fa-icon icon="search"></fa-icon>
+                        </button>
+                        
+                    </div>
+                </div> -->
+                
+            <h4>
+                Result: <code class="error">{{ctr| number}} markers</code>
+            </h4>
+            <p *ngIf="selectedMarker">
+                Lat: {{ selectedMarker.lat }} Lng: {{ selectedMarker.lng }}
+            </p>
+            </div>
+        </div>
+    </div>
+</div>
+  

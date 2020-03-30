@@ -1,0 +1,146 @@
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <anms-map></anms-map>
+  </div>
+  <div class="col-md-6">
+    <ag-grid-angular
+    style="width: auto; height: 500px;"
+    class="ag-theme-material"
+    [rowData]="rowData"
+    [columnDefs]="columnDefs"
+    >
+</ag-grid-angular>
+  </div>
+</div>
+
+<div class="container" rtl>
+  <!-- <div class="row">
+    <div class="col">
+      <h1 class="main-heading">Add</h1>
+    </div>
+  </div> -->
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <mat-card>
+          <span class="d-flex justify-content-between align-items-baseline">
+            <h2>Form <button type="button" mat-fab color="primary" ><fa-icon icon="pen"></fa-icon></button></h2>
+          </span>
+          <!-- <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Username"
+                formControlName="username">
+              <mat-error *ngIf="form.get('username').invalid">
+                Username
+                error
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput type="password" placeholder="password"
+                formControlName="password">
+              <mat-error *ngIf="form.get('password').invalid">
+                Password
+                Error
+              </mat-error>
+            </mat-form-field>
+          </div> -->
+
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Fund Source *"
+                formControlName="fund_src">
+              <mat-error *ngIf="form.get('fund_src').invalid">
+                Fund Source is required.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Year Funded *"
+                formControlName="year_fndd">
+              <mat-error *ngIf="form.get('year_fndd').invalid">
+                Year Funded is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Project Category *"
+                formControlName="prjct_ctgry_id">
+              <mat-error *ngIf="form.get('prjct_ctgry_id').invalid">
+                Project Category is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Sub Category *"
+                formControlName="sub_cat">
+              <mat-error *ngIf="form.get('sub_cat').invalid">
+                Sub Category is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Project Title *"
+                formControlName="prct_title">
+              <mat-error *ngIf="form.get('prct_title').invalid">
+                Project Title is required.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Amount *"
+                formControlName="cost">
+              <mat-error *ngIf="form.get('cost').invalid">
+                Amount is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Recipient *"
+                formControlName="recipient">
+              <mat-error *ngIf="form.get('recipient').invalid">
+                Recipient is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Location *"
+                formControlName="location">
+              <mat-error *ngIf="form.get('location').invalid">
+                Location is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="row">
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Latitude *"
+                formControlName="lat">
+              <mat-error *ngIf="form.get('lat').invalid">
+                Latitude is required.
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="col" [ngClass]="routeAnimationsElements">
+              <input matInput placeholder="Longitude *"
+                formControlName="lng">
+              <mat-error *ngIf="form.get('lng').invalid">
+                Longitude is required.
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="row buttons d-flex justify-content-between pad">
+            <button mat-raised-button color="primary" (click)="save(form)" [ngClass]="routeAnimationsElements" >
+              Save
+            </button>
+            <button type="reset" mat-raised-button (click)="clear()" [ngClass]="routeAnimationsElements">
+              Clear
+            </button>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </form>
+
+</div>
