@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ElementRef, Inject,EventEmitter,Output   } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ViewChild, ElementRef, Inject,EventEmitter,Output, Input   } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import {EmapsService} from '../../../../services/emaps.service'
 import { from } from 'rxjs';
@@ -19,6 +19,8 @@ export interface DialogData {  animal: string;
 
 export class MapComponent implements OnInit {
   @ViewChild('toClick',{static: true}) toClick:ElementRef; 
+  @Input() childmessage;
+  @Input() selected;
   // @Output() myGroupChanged: EventEmitter<number> =   new EventEmitter();
   init=0;
   v=false;
@@ -31,6 +33,7 @@ export class MapComponent implements OnInit {
   year: any;
   category: any;
   locs: any;
+  sampleImg:any;
   ic: any;
   pre_val = {year_fndd:true,ctgry_id:true};
   myGroup = new FormGroup({
@@ -102,29 +105,45 @@ export class MapComponent implements OnInit {
   visible(marker,i){
     //console.log(this.myGroup.value);
     // if()
-    var yr = this.myGroup.value.year_fndd==marker.year_fndd||this.myGroup.value.year_fndd==null ||this.myGroup.value.year_fndd=="all";
-    var ctgry = this.myGroup.value.ctgry_id==marker.ctgry_id||this.myGroup.value.ctgry_id==null ||this.myGroup.value.ctgry_id=="all";
-    
-    var prov = true;
-    var mun = true;
-    if(this.myGroup.value.province!=undefined && marker.lctn_str!=undefined){
-      var v_p = this.myGroup.value.province.toString().substring(0,5);
-      var m_p = marker.lctn_str.toString().substring(0,5);
-      prov = v_p==m_p||this.myGroup.value.province==null ||this.myGroup.value.province=="all";
-      var v_m;
-      if(this.myGroup.value.mun_city!=undefined)
-        v_m = this.myGroup.value.mun_city.toString();
-      var m_m = marker.lctn_str.toString();
-      mun = v_m==m_m||this.myGroup.value.mun_city==null ||this.myGroup.value.mun_city=="all";
+    if(this.selected){
+      //console.log(this.selected);
+      //console.log(marker);
+      var ct=0;
+      var bol=false;
+      do{
+        //console.log(ct);
+        if(this.selected[ct].prjct_id==marker.prjct_id){
+          bol=true;
+        }
+        ct++;
+      }while(!bol&&ct<this.selected.length);
+      return bol;
     }
-    if(yr && ctgry && prov && mun) this.ctr2++;
-    
-    //console.log(i+" - "+this.markers.length)
-    if(i==this.markers.length-1){ 
-      this.ctr = this.ctr2; 
-      this.ctr2=0; 
+    else{
+      var yr = this.myGroup.value.year_fndd==marker.year_fndd||this.myGroup.value.year_fndd==null ||this.myGroup.value.year_fndd=="all";
+      var ctgry = this.myGroup.value.ctgry_id==marker.ctgry_id||this.myGroup.value.ctgry_id==null ||this.myGroup.value.ctgry_id=="all";
+      
+      var prov = true;
+      var mun = true;
+      if(this.myGroup.value.province!=undefined && marker.lctn_str!=undefined){
+        var v_p = this.myGroup.value.province.toString().substring(0,5);
+        var m_p = marker.lctn_str.toString().substring(0,5);
+        prov = v_p==m_p||this.myGroup.value.province==null ||this.myGroup.value.province=="all";
+        var v_m;
+        if(this.myGroup.value.mun_city!=undefined)
+          v_m = this.myGroup.value.mun_city.toString();
+        var m_m = marker.lctn_str.toString();
+        mun = v_m==m_m||this.myGroup.value.mun_city==null ||this.myGroup.value.mun_city=="all";
+      }
+      if(yr && ctgry && prov && mun) this.ctr2++;
+      
+      //console.log(i+" - "+this.markers.length)
+      if(i==this.markers.length-1){ 
+        this.ctr = this.ctr2; 
+        this.ctr2=0; 
+      }
+      return yr && ctgry && prov && mun;
     }
-    return yr && ctgry && prov && mun;
   }
   onMapReady(){
     //console.log(this.toClick);
@@ -145,25 +164,44 @@ export class MapComponent implements OnInit {
     val.year_fndd;
     val.ctgry_id;
     this.v = !this.v;
+    console.log(val);
+    console.log(this.v);
     //this.visible(this.v);
   }
 
   openDialog(id): void {
     console.log(id);
     id.isClicked=true;
-    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-      width: '400px',
-      height: '500px',
-      position: {top: '132px',left: '0px'},
-      data: {id: id}
+    var sts:any;
+    this.EmapsService.getStatus(id.prjct_id).subscribe(data => {
+      console.log(data);
+      if(data==undefined || data==null || data[0] == undefined){
+        //this.notificationService.error("Invalid Username or Password");
+        console.log("No Status");
+        id.isClicked = false;
+        this.toClick.nativeElement.click();
+      }
+      else{
+        console.log(data);
+        sts = data[0];
+        //console.log("../../../../../assets/img/"+sts.prjctsts_imgs+sts.imgs[0]+"/");
+        
+        const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+          width: '400px',
+          height: '500px',
+          position: {top: '132px',left: '0px'},
+          data: {id: id, sts:sts}
+        });
+    
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed');
+          id.isClicked = false;
+          this.toClick.nativeElement.click();
+          console.log(id);
+        });
+      }
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      id.isClicked = false;
-      this.toClick.nativeElement.click();
-      console.log(id);
-    });
+   
   }
 
   ngOnInit() {
@@ -193,7 +231,7 @@ export class MapComponent implements OnInit {
       }
       else{
         this.ic = data;
-        console.log(data);
+        // console.log(data);
       }
     });
   }
@@ -217,29 +255,52 @@ export class MapComponent implements OnInit {
     </p>
     <h3>Status</h3>
     <mat-card>
-    <p><b>As of January 1, 2020</b><br>
-        <b>Physical Accomplishment:</b> 15 has<br>
-        <b>Unliqdated Balance:</b> Php 0.00<br>
-        <b>Remarks:</b> Sample Remarks<br>
-        <b>Recommendation:</b> Sample Recommendation<br>
+    <p><b>As of {{data.sts.prjctsts_date|date}}</b><br>
+        <b>Physical Accomplishment:</b> {{data.sts.physical_acc}}<br>
+        <b>Unliqdated Balance:</b> Php {{data.sts.unlqdtd_blnc|number}}.00<br>
+        <b>Remarks:</b> {{data.sts.prjctsts_remarks}}<br>
+        <b>Recommendation:</b> {{data.sts.prjctsts_rcmmndtn}}<br>
     </p>
-    <img mat-card-image  src="../../../../../assets/intro.jpg" alt="{{data.id.prjct_title}}">
+    <span *ngIf="data.sts.imgs">
+      <img mat-card-image  src="{{img}}" alt="#"><br>
+      <div class="row buttons d-flex justify-content-between pad">
+        <button mat-raised-button color="primary" (click)="changeImg(-1)" [ngClass]="routeAnimationsElements">Prev</button>
+        <button mat-raised-button color="primary" (click)="changeImg(1)" [ngClass]="routeAnimationsElements">Next</button>
+      </div>
+    </span>
     </mat-card>
   </div>
   <div mat-dialog-actions align="end">
     <button mat-button (click)="onNoClick()" >Ok</button>
   </div>`,
 })
-export class DialogOverviewExampleDialog {
+export class DialogOverviewExampleDialog implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any) {
       //dialogRef.disableClose = true;
     }
+    ind=0;
+    img="";
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+  ngOnInit() {
+    if(this.data.sts.imgs){
+      this.img = "../../../../../assets/img/"+this.data.sts.prjctsts_imgs+"/"+this.data.sts.imgs[this.ind];
+      console.log(this.img);
+    }
+  }
+  changeImg(plus){
+    this.ind=this.ind+plus;
+    if(this.data.sts.imgs.length==this.ind){
+      this.ind=0;
+    }
+    if(this.ind<0){ this.ind = this.data.sts.imgs.length-1;}
+    //console.log(this.ind);
+    this.img = "../../../../../assets/img/"+this.data.sts.prjctsts_imgs+"/"+this.data.sts.imgs[this.ind];
   }
 
 }

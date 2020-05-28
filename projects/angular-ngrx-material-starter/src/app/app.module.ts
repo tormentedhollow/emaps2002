@@ -9,6 +9,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app/app.component';
 import {EmapsService} from './services/emaps.service';
 import { AgGridModule } from 'ag-grid-angular';
+import { MatCarouselModule } from '@ngmodule/material-carousel';
+
 
 @NgModule({
   imports: [
@@ -20,8 +22,9 @@ import { AgGridModule } from 'ag-grid-angular';
     CoreModule,
     SharedModule,
 
-    // app
+    // app,
     AppRoutingModule,
+    MatCarouselModule.forRoot(),
     AgGridModule.withComponents([])
   ],
   declarations: [AppComponent],

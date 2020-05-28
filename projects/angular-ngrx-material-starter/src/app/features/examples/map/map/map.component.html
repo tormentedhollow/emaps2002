@@ -5,7 +5,7 @@
         <!-- <div class="col-md-9" *ngIf="init==1">
             <mat-spinner></mat-spinner>
         </div> -->
-        <div class="col-md-8">
+        <div class="col-md-8" *ngIf="childmessage!=1">
             <agm-map
             [latitude]="latitude"
             [longitude]="longitude"
@@ -52,9 +52,38 @@
             </agm-rectangle> -->
             </agm-map>
         </div>
-        <div class="col-md-4" [ngClass]="routeAnimationsElements">
+
+        <div class="col-md-12" *ngIf="childmessage==1">
+            <agm-map
+            [latitude]="latitude"
+            [longitude]="longitude"
+            [zoom]="8"
+            [mapTypeId]="mapType"
+            (mapReady)="onMapReady()"
+            >
+            
+            <div >
+                <agm-marker
+                *ngFor="let marker of markers; let i = index "
+                [latitude]="marker.lat"
+                [longitude]="marker.lng"
+                [opacity]="marker.alpha"
+                [markerDraggable]="false"
+                [visible]="visible(marker,i)"
+                [agmFitBounds]="true"
+                [iconUrl]="{
+                    url: icons[marker.ctgry_id].icon,
+                    scaledSize: marker.isClicked ? {width: 40,height: 40} : {width: 25,height: 25}
+                }"
+                (markerClick)="openDialog(marker)"
+                >
+                </agm-marker>
+            </div>
+            </agm-map>
+        </div>
+        <div class="col-md-4" [ngClass]="routeAnimationsElements" *ngIf="childmessage!=1">
             <div [formGroup]="myGroup">
-                <h2>Filter Options <button type="button" mat-fab color="primary" class="add"><fa-icon icon="filter"></fa-icon></button></h2>
+                <h4>Filter Options <button type="button" mat-fab color="primary" class="add"><fa-icon icon="filter"></fa-icon></button></h4>
                 <!-- <div class="row">
                     <mat-form-field class="col">
                         <input matInput placeholder="{{ 'anms.examples.crud.placeholder1' | translate }}"
@@ -139,9 +168,9 @@
                     </div>
                 </div> -->
                 
-            <h4>
+            <h6>
                 Result: <code class="error">{{ctr| number}} markers</code>
-            </h4>
+            </h6>
             <p *ngIf="selectedMarker">
                 Lat: {{ selectedMarker.lat }} Lng: {{ selectedMarker.lng }}
             </p>
@@ -149,4 +178,4 @@
         </div>
     </div>
 </div>
-  
+

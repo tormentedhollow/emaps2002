@@ -33,9 +33,12 @@ import { MapComponent } from './map/map/map.component';
 import { AgmCoreModule } from '@agm/core';
 import { EntryComponent } from './entry/entry.component';
 import { DialogOverviewExampleDialog } from './map/map/map.component';
+import { DialogStatusExampleDialog } from './entry/entry.component';
 import { CarouselComponent } from './carousel/carousel.component';
 import { MatCarouselModule,MatCarouselSlideComponent } from '@ngmodule/material-carousel';
 import { AgGridModule } from 'ag-grid-angular';
+
+import { FileUploadModule } from 'ng2-file-upload';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -50,6 +53,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [ MatCarouselModule.forRoot(),
     
+    FileUploadModule,
     AgGridModule.withComponents([]),
     LazyElementsModule,
     SharedModule,
@@ -92,12 +96,14 @@ export function HttpLoaderFactory(http: HttpClient) {
     ElementsComponent,
     MapComponent,
     DialogOverviewExampleDialog,
+    DialogStatusExampleDialog,
     EntryComponent,
     CarouselComponent,
   ],
   entryComponents: [
     MapComponent,
     DialogOverviewExampleDialog,
+    DialogStatusExampleDialog
   ],
   providers: [StockMarketService, UserService]
 })

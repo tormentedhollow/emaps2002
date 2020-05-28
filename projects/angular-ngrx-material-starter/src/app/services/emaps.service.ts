@@ -51,4 +51,25 @@ export class EmapsService {
     var token = JSON.parse(localStorage.getItem('ANMS-AUTH'))
     return this.http.post(url, {token});
   }
+  getStatus(id) {
+    const url = `${this.apiRoot}/getStatus`;
+    var token = JSON.parse(localStorage.getItem('ANMS-AUTH'));
+    return this.http.post(url, {token,id});
+  }
+  getSubCat() {
+    const url = `${this.apiRoot}/getSubCat`;
+    var token = JSON.parse(localStorage.getItem('ANMS-AUTH'));
+    return this.http.post(url, {token});
+  }
+  insertProject(val) {
+    const url = `${this.apiRoot}/insertProject`;
+    var token = JSON.parse(localStorage.getItem('ANMS-AUTH'));
+    return this.http.post(url, {token,val});
+  }
+  
+  insertStatus(val,date,balance,accomp,remarks,analysis,prjct_id) {
+    const url = `${this.apiRoot}/insertStatus`;
+    var token = JSON.parse(localStorage.getItem('ANMS-AUTH'));
+    return this.http.post(url, {token,val,date,balance,accomp,remarks,analysis,prjct_id});
+  }
 }
